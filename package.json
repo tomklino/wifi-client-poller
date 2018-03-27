@@ -1,0 +1,19 @@
+{
+  "name": "wifi-client-poller",
+  "version": "1.0.0",
+  "description": "Poll the router for the wifi clients currently connected",
+  "main": "app.js",
+  "scripts": {
+    "test": "mocha tests/*.spec.js"
+  },
+  "keywords": [
+    "router",
+    "wifi"
+  ],
+  "author": "Tom Klinovsky <lutraman@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "cheerio-tableparser": "^1.0.1"
+  }
+}
