@@ -30,8 +30,11 @@ function loginToRouter({router_ip, username, password, path}) {
 }
 
 async function fetchConnectedWifiClients({router_ip, username, password, path}) {
-  await loginToRouter({router_ip, username, password});
-
+  try {
+    await loginToRouter({router_ip, username, password});
+  } catch (err) {
+    return Promise.reject(err);
+  }
   return new Promise((resolve, reject) => {
     if (typeof router_ip !== 'string') {
       reject(new Error('no valid router_ip provided'))
@@ -43,8 +46,7 @@ async function fetchConnectedWifiClients({router_ip, username, password, path}) 
       function(err, res, body) {
         const $ = cheerio.load(body);
         if ($('h1').html().includes("Login")) {
-          console.log("not logged in")
-          resolve([]);
+          reject(new Error("login error"));
         } else {
           resolve(parseWifiClients(body));
         }
@@ -56,4 +58,5 @@ fetchConnectedWifiClients({
   router_ip: '192.168.1.1',
   username: 'admin',
   password: 'admin'
-}).then(clients => console.log(clients));
+}).then(clients => console.log(clients))
+  .catch(err => console.error("login error"))
