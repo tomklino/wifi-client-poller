@@ -1,4 +1,3 @@
-const http = require('http');
 const cheerio = require('cheerio');
 const request = require('request');
 
@@ -37,24 +36,18 @@ async function fetchConnectedWifiClients({router_ip, username, password, path}) 
     if (typeof router_ip !== 'string') {
       reject(new Error('no valid router_ip provided'))
     }
-    
-    http.get({
-      host: router_ip,
-      port: 80,
-      path: path || '/wlanAccess.asp',
-      agent: false,
-      }, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        const $ = cheerio.load(data);
+
+    path = path || '/wlanAccess.asp';
+    request.get(
+      'http://' + router_ip + path,
+      function(err, res, body) {
+        const $ = cheerio.load(body);
         if ($('h1').html().includes("Login")) {
           console.log("not logged in")
           resolve([]);
         } else {
-          resolve(parseWifiClients(data));
+          resolve(parseWifiClients(body));
         }
-      });
     });
   })
 }
