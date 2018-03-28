@@ -46,5 +46,35 @@ describe("function can tell the difference between changing return values", () =
     elementLeaveMock.should.have.not.been.called;
     done();
   });
+
+  it("triggers an event when elements join", (done) => {
+    let elementJoinMock = sinon.spy();
+    let tracker = trackerFactory({
+      watchFunction: makeMockFunction([1,2], [1,2,3])
+    });
+
+    tracker.on('element_join', elementJoinMock);
+
+    tracker.call();
+    tracker.call();
+    
+    elementJoinMock.should.have.been.calledWith([3]);
+    done();
+  });
+
+  it("does not trigger an event when elements don't join", (done) => {
+    let elementJoinMock = sinon.spy();
+    let tracker = trackerFactory({
+      watchFunction: makeMockFunction([1,2,3], [1,2,3])
+    });
+
+    tracker.on('element_join', elementJoinMock);
+
+    tracker.call();
+    tracker.call();
+    
+    elementJoinMock.should.have.not.been.called;
+    done();
+  });
 });
 
