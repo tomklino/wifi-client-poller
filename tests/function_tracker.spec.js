@@ -76,5 +76,23 @@ describe("function can tell the difference between changing return values", () =
     elementJoinMock.should.have.not.been.called;
     done();
   });
+
+  it("triggers an element_join event with custom comparator", (done) => {
+    let elementJoinMock = sinon.spy();
+    let tracker = trackerFactory({
+      watchFunction: makeMockFunction(
+        [{id: 1, name: "a"}],
+        [{id: 2, name: "b"}, {id: 1, name: "b"}])
+    });
+
+    tracker.on('element_join', elementJoinMock);
+    tracker.setComparator((a,b) => {return a.id === b.id});
+
+    tracker.call();
+    tracker.call();
+
+    elementJoinMock.should.have.been.calledWith([{id: 2, name: "b"}])
+    done();
+  });
 });
 
