@@ -204,3 +204,29 @@ describe("function can tell the difference between changing return promises", ()
     });
   });
 });
+
+describe("full example with elements joining and leaving, initializing with chaining", () => {
+  it('performs all functions at once', (done) => {
+    let elementJoinMock = sinon.spy();
+    let elementLeaveMock = sinon.spy();
+
+    tracker = trackerFactory({
+      watchFunction: makePromiseMockFunction(
+        [{id: 1, name: "H"}, {id: 2, name: "G"}],
+        [{id: 1, name: "I"}, {id: 3, name: "Y"}]
+      )
+    })
+    .setComparator((a,b) => {return a.id === b.id})
+    .on('element_join', elementJoinMock)
+    .on('element_left', elementLeaveMock)
+
+    tracker.call()
+    tracker.call()
+
+    Promise.resolve().then(() => {
+      elementJoinMock.should.have.been.calledWith([{id: 3, name: "Y"}]);
+      elementLeaveMock.should.have.been.calledWith([{id: 2, name: "G"}]);
+      done();
+    })
+  })
+})

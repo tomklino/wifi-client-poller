@@ -20,9 +20,11 @@ function trackerFactory({watchFunction}) {
   let compare_function = null;
   let element_left_cb = null;
   let element_join_cb = null;
-  return {
+
+  trackerMethods = {
     setComparator: (comparator) => {
-      compare_function = comparator
+      compare_function = comparator;
+      return trackerMethods;
     },
     on: (event_name, cb) => {
       if (event_name === "element_left") {
@@ -31,14 +33,14 @@ function trackerFactory({watchFunction}) {
       if (event_name === "element_join") {
         element_join_cb = cb;
       }
-      return;
+      return trackerMethods;
     },
     call: () => {
       Promise.resolve(watchFunction())
       .then((current_result) => {
         if (last_result === null) {
           last_result = current_result;
-          return;
+          return trackerMethods;
         }
         let elementsThatLeft =
           getMissingElements(last_result, current_result, compare_function);
@@ -54,4 +56,5 @@ function trackerFactory({watchFunction}) {
       });
     }
   }
+  return trackerMethods;
 }
