@@ -18,10 +18,9 @@ function makeMockFunction(...values) {
 
 describe("function can tell the difference between changing return values", () => {
   it("returns which elements have left the array", (done) => {
-    elementLeaveMock = sinon.spy();
-    mockElementLeft = makeMockFunction([1,2,3], [1,2]);
+    let elementLeaveMock = sinon.spy();
     let tracker = trackerFactory({
-      watchFunction: mockElementLeft
+      watchFunction: makeMockFunction([1,2,3], [1,2])
     });
 
     tracker.on('element_left', elementLeaveMock);
@@ -30,6 +29,21 @@ describe("function can tell the difference between changing return values", () =
     tracker.call();
 
     elementLeaveMock.should.have.been.calledWith([3]);
+    done();
+  });
+
+  it("does not trigger the event when no elements leave", (done) => {
+    let elementLeaveMock = sinon.spy();
+    let tracker = trackerFactory({
+      watchFunction: makeMockFunction([1,2,3], [1,3,2,4])
+    });
+
+    tracker.on('element_left', elementLeaveMock);
+
+    tracker.call();
+    tracker.call();
+
+    elementLeaveMock.should.have.not.been.called;
     done();
   });
 });
