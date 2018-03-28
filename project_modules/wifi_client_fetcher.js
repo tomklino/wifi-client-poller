@@ -18,7 +18,11 @@ function loginToRouter({router_ip, username, password, path}) {
       'http://' + router_ip + path,
       { form: post_data },
       function(err, res, body) {
-        if (res.headers['location'] === '/login.asp') {
+        if(err) {
+          reject(err);
+          return;
+        }
+        if (res && res.headers['location'] === '/login.asp') {
           reject(new Error("login failed"));
         } else if (res.headers['location'] === '/RgSwInfo.asp') {
           resolve();
@@ -75,9 +79,8 @@ function parseWifiClients(html) {
       mac,
       ip: wifiClientsArray[3][i],
       name: wifiClientsArray[4][i]
-    }) 
+    })
   });
 
   return wifiClients;
 }
-
