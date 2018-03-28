@@ -13,8 +13,11 @@
   "author": "Tom Klinovsky <lutraman@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "chai": "^4.1.2",
     "cheerio": "^1.0.0-rc.2",
     "cheerio-tableparser": "^1.0.1",
-    "request": "^2.85.0"
+    "request": "^2.85.0",
+    "sinon": "^4.4.10",
+    "sinon-chai": "^3.0.0"
   }
 }
