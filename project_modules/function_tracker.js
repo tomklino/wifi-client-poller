@@ -1,7 +1,7 @@
 module.exports = trackerFactory;
 
 function getMissingElements(last_array, cur_array, compare) {
-  if(typeof compare !== 'function') { 
+  if(typeof compare !== 'function') {
     compare = (a, b) => {return a === b};
   }
   let missing = last_array.filter((elem) => {
@@ -34,20 +34,24 @@ function trackerFactory({watchFunction}) {
       return;
     },
     call: () => {
-      let current_result = watchFunction();
-      if (last_result === null) {
+      Promise.resolve(watchFunction())
+      .then((current_result) => {
+        if (last_result === null) {
+          last_result = current_result;
+          return;
+        }
+        let elementsThatLeft =
+          getMissingElements(last_result, current_result, compare_function);
+        let elementsThatJoined =
+          getMissingElements(current_result, last_result, compare_function);
+        if (elementsThatLeft.length > 0 && typeof element_left_cb === 'function') {
+          element_left_cb(elementsThatLeft);
+        }
+        if (elementsThatJoined.length > 0 && typeof element_join_cb === 'function') {
+          element_join_cb(elementsThatJoined);
+        }
         last_result = current_result;
-        return;
-      }
-      let elementsThatLeft = getMissingElements(last_result, current_result, compare_function);
-      let elementsThatJoined = getMissingElements(current_result, last_result, compare_function);
-      if (elementsThatLeft.length > 0 && typeof element_left_cb === 'function') {
-        element_left_cb(elementsThatLeft);
-      }
-      if (elementsThatJoined.length > 0 && typeof element_join_cb === 'function') {
-        element_join_cb(elementsThatJoined);
-      }
-      last_result = current_result;
+      });
     }
   }
 }
