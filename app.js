@@ -1,6 +1,6 @@
 const fs = require('fs');
+const trackerFactory = require('function-tracker');
 
-const trackerFactory = require('./project_modules/function_tracker');
 const fetchConnectedWifiClients = require('./project_modules/wifi_client_fetcher');
 
 let log_destination = '/tmp/test.log';
