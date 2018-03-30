@@ -17,7 +17,13 @@ function writeToLog(line) {
 }
 
 wifiClientsTracker = trackerFactory({
-  watchFunction: fetchMyWifiClients
+  watchFunction: () => {
+    return fetchConnectedWifiClients({
+      router_ip: '192.168.1.1',
+      username: 'admin',
+      password: 'admin'
+    })
+  }
 })
 .setComparator((a,b) => { return a.mac === b.mac;})
 .on('element_join', (joined_elemnts) => {
@@ -28,11 +34,3 @@ wifiClientsTracker = trackerFactory({
 })
 
 setInterval(() => { wifiClientsTracker.call() }, 2000)
-
-function fetchMyWifiClients() {
-  return fetchConnectedWifiClients({
-    router_ip: '192.168.1.1',
-    username: 'admin',
-    password: 'admin'
-  })
-}
